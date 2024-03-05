@@ -1,5 +1,6 @@
 import json
 from flask import Flask, render_template, request, redirect, flash, url_for
+from datetime import datetime
 
 
 def loadClubs():
@@ -26,12 +27,18 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/showSummary', methods=['POST'])
+@app.route('/showSummary', methods=['GET', 'POST'])
 def showSummary():
-    club = [club for club in clubs if club['email'] == request.form['email']]
-    if not club:  # Vérifie si la liste est vide
+    if request.method == 'POST':
+        club = [club for club in clubs if club['email'] == request.form['email']]
+    else:  # GET
+        email = request.args.get('email')
+        club = [club for club in clubs if club['email'] == email]
+
+    if not club:
         flash("Sorry, that email was not found.")
         return redirect(url_for('index'))
+
     return render_template('welcome.html', club=club[0], competitions=competitions)
 
 
@@ -39,13 +46,20 @@ def showSummary():
 def book(competition, club):
     foundClub = [c for c in clubs if c["name"] == club][0]
     foundCompetition = [c for c in competitions if c["name"] == competition][0]
+    # Convertir la date de la compétition en objet datetime pour la comparaison
+    competition_date = datetime.strptime(foundCompetition['date'], "%Y-%m-%d %H:%M:%S")
+    # Vérifier si la compétition est déjà passée
+    if competition_date < datetime.now():
+        flash("This competition has already passed")
+        return redirect(url_for('showSummary', email=foundClub['email']))
     if foundClub and foundCompetition:
         return render_template(
             "booking.html", club=foundClub, competition=foundCompetition
         )
     else:
-        flash("Something went wrong-please try again")
-        return render_template("welcome.html", club=club, competitions=competitions)
+        flash("Something went wrong - please try again")
+        return redirect(url_for('showSummary', email=foundClub['email']))
+
 
 
 @app.route("/purchasePlaces", methods=["POST"])
