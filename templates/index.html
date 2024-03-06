@@ -21,5 +21,22 @@
         <input type="email" name="email" id=""/>
         <button type="submit">Enter</button>
     </form>
+    <h2>Classement des clubs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Club</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for club in clubs %}
+            <tr>
+                <td>{{ club.name }}</td>
+                <td>{{ club.points }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
