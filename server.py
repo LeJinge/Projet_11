@@ -15,6 +15,15 @@ def loadCompetitions():
         return listOfCompetitions
 
 
+def saveClubs(updated_clubs):
+    with open('clubs.json', 'w') as c:
+        json.dump({'clubs': updated_clubs}, c, indent=4)
+
+
+def saveCompetitions(updated_competitions):
+    with open('competitions.json', 'w') as comps:
+        json.dump({'competitions': updated_competitions}, comps, indent=4)
+
 app = Flask(__name__)
 app.secret_key = "something_special"
 
@@ -61,24 +70,27 @@ def book(competition, club):
         return redirect(url_for('showSummary', email=foundClub['email']))
 
 
-
 @app.route("/purchasePlaces", methods=["POST"])
 def purchasePlaces():
     competition = [c for c in competitions if c["name"] == request.form["competition"]][0]
     club = [c for c in clubs if c["name"] == request.form["club"]][0]
     placesRequired = int(request.form["places"])
 
-    # Vérifier si le club a suffisamment de points pour la réservation demandée
     if int(club["points"]) < placesRequired:
         flash("You do not have enough points to complete this booking")
         return render_template("welcome.html", club=club, competitions=competitions)
 
-    # Vérifier que le nombre de places demandées ne dépasse pas 12
     if placesRequired > 12:
         flash("Cannot reserve more than 12 places per competition")
         return render_template("welcome.html", club=club, competitions=competitions)
 
-    competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - placesRequired
+    # Déduire les points et mettre à jour le nombre de places pour la compétition
+    club["points"] = str(int(club["points"]) - placesRequired)
+    competition["numberOfPlaces"] = str(int(competition["numberOfPlaces"]) - placesRequired)
+
+    saveClubs(clubs)
+    saveCompetitions(competitions)
+
     flash("Congratulations! Your booking is confirmed.")
     return render_template("welcome.html", club=club, competitions=competitions)
 
