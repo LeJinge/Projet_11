@@ -68,8 +68,8 @@ class TestPurchaseNumberPlaces(BaseTestClass):
 
     def test_purchase_places_too_many_requested(self, client):
         data = {
-            'club': 'Simply Lift',
-            'competition': 'Spring Festival',
+            'club': 'Simply Lift2',
+            'competition': 'Spring Festival2',
             'places': '13'
         }
         response = client.post('/purchasePlaces', data=data, follow_redirects=True)
@@ -77,8 +77,8 @@ class TestPurchaseNumberPlaces(BaseTestClass):
 
     def test_purchase_places_allowed_number(self, client):
         data = {
-            'club': 'Simply Lift',
-            'competition': 'Spring Festival',
+            'club': 'Simply Lift2',
+            'competition': 'Spring Festival2',
             'places': '12'
         }
         response = client.post('/purchasePlaces', data=data, follow_redirects=True)
@@ -103,8 +103,8 @@ class TestSaveData(BaseTestClass):
 
     def test_purchase_places_updates_points_and_saves(self, client):
         # Préparez les données de test
-        club_name = 'Simply Lift'
-        competition_name = 'Fall Classic'
+        club_name = 'She Lifts'
+        competition_name = 'Fall Classic2'
         initial_places = 5
 
         # Chargement initial des données depuis les fichiers
