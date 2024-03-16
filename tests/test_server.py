@@ -146,7 +146,7 @@ class TestDisplayPointClubs(BaseTestClass):
 
     def test_points_table(self, client):
         # Faites une requête GET sur la route qui affiche le tableau des points.
-        response = client.get('/')  # Remplacez '/' par la route réelle si elle est différente.
+        response = client.get('/')
 
         # Vérifiez que le statut de la réponse est 200 (OK).
         assert response.status_code == 200
